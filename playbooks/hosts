@@ -1,0 +1,4 @@
+ubuntu_server ansible_host=172.16.2.131 ansible_sudo_pass=asdwsx
+
+[finbot_servers]
+ubuntu-server
