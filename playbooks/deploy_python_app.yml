@@ -1,0 +1,39 @@
+---
+- name: Configure server with finbot
+  hosts: finbot_servers
+  vars_files:
+    - secrets.yml
+    - vars/default.yml
+  tasks:
+    - name: create application user
+      become: True
+      user: >
+        name="{{ linux_user_name }}"
+        uid="{{ linux_user_id }}"
+        home="/user/{{ linux_user_name }}"
+        shell='/bin/bash'
+        password="{{ linux_user_encrypted_password }}"
+        generate_ssh_key=True
+        ssh_key_file: "/home/{{ linux_user_name }}/.ssh/id_rsa"
+    - name: install python3 and dependencies
+      become: True
+      apt: >
+        pkg={{ item }}
+        update_cache=yes
+        cache_valid_time=3600
+      with_items:
+        - python3.8
+        - python-pip
+        - python-virtualenv
+    - name: create project path
+      file: path="/etc/{{ prj_name }}" state=directory
+    - name: create logs file
+      file: path="/var/log/{{ prj_name }}" state=created mode='0644'
+    - name: clone project from git
+      git: >
+        key_file: {{ git_ssh_key }}
+        repo: "{{ git_repo }}"
+        dest: "/etc/{{ prj_name }}"
+    - name: configure git
+    - name: pull project from github
+    - name: install requirements
